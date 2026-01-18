@@ -150,6 +150,10 @@ const MESSAGES = {
     ja: "モデル読み込み中...",
     en: "Loading model...",
   },
+  downloadingModel: {
+    ja: "モデルをダウンロード中... {progress}%",
+    en: "Downloading model... {progress}%",
+  },
   dropzoneLabel: {
     ja: "ここに画像ファイルをドラッグ&ドロップ<br>またはクリックしてファイルを選択<br>貼り付けも可能",
     en: "Drag & drop image here<br>or click to select file<br>or paste from clipboard",
@@ -406,12 +410,63 @@ async function ensureOrtLoaded() {
   throw new Error(msg("ortLoadFailed", { attempts: tried.join(", ") }));
 }
 
+async function fetchModelWithProgress(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+  }
+
+  const contentLength = response.headers.get('Content-Length');
+  const total = contentLength ? parseInt(contentLength, 10) : 0;
+  
+  if (!total) {
+    // Content-Length not available, fallback to simple fetch
+    return await response.arrayBuffer();
+  }
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let receivedLength = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    chunks.push(value);
+    receivedLength += value.length;
+
+    const progress = Math.round((receivedLength / total) * 100);
+    setStatus(msg("downloadingModel", { progress }));
+  }
+
+  // Concatenate chunks into single Uint8Array
+  const chunksAll = new Uint8Array(receivedLength);
+  let position = 0;
+  for (const chunk of chunks) {
+    chunksAll.set(chunk, position);
+    position += chunk.length;
+  }
+
+  return chunksAll.buffer;
+}
+
 async function initOrt() {
   try {
     ortApi = await ensureOrtLoaded();
   } catch (err) {
     console.error(err);
     setStatus(err.message);
+    return;
+  }
+
+  // Download model with progress
+  let modelBuffer;
+  try {
+    setStatus(msg("downloadingModel", { progress: 0 }));
+    modelBuffer = await fetchModelWithProgress("character.onnx");
+  } catch (err) {
+    console.error("Failed to download model", err);
+    setStatus(msg("modelLoadFailed", { reason: err.message }));
     return;
   }
 
@@ -431,7 +486,7 @@ async function initOrt() {
 
   for (const providers of providerPlans) {
     try {
-      session = await ortApi.InferenceSession.create("character.onnx", {
+      session = await ortApi.InferenceSession.create(modelBuffer, {
         executionProviders: providers,
       });
       usedProviders = Array.isArray(providers) 
