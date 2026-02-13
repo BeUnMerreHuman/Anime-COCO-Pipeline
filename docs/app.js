@@ -435,7 +435,7 @@ async function fetchModelWithProgress(url) {
     chunks.push(value);
     receivedLength += value.length;
 
-    const progress = Math.round((receivedLength / total) * 100);
+    const progress = Math.min(100, Math.round((receivedLength / total) * 100));
     setStatus(msg("downloadingModel", { progress }));
   }
 

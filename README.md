@@ -16,10 +16,10 @@ YOLOX-based anime character detector running in browser with ONNX Runtime Web (W
 | Base Model | YOLOX-s |
 | Input Size | 640×640 |
 | Classes | Single class: "character" |
-| mAP@50 | 79.4% |
-| mAP@50-95 | 55.6% |
-| Training Images | 2,656 |
-| Annotations | 13,761 |
+| mAP@50 | 82.4% |
+| mAP@50-95 | 57.7% |
+| Training Images | 3,253 |
+| Annotations | 15,901 |
 
 ## Features
 
