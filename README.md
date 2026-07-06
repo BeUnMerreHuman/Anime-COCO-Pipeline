@@ -1,4 +1,4 @@
-# anime-character-detector
+# Anime Character Detector
 Adapted the orignal YOLOX-based anime character detector by [ksasao](https://github.com/ksasao) to output the result in COCO based format for datasets
 
 ## Links
