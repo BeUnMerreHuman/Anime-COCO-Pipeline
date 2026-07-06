@@ -1,9 +1,10 @@
 # anime-character-detector
-Adapted the orignal YOLOX-based anime character detector by [ksasao](https://ksasao.github.io/anime-character-detector/) to output the result in COCO based format for datasets
+Adapted the orignal YOLOX-based anime character detector by [ksasao](https://github.com/ksasao) to output the result in COCO based format for datasets
 
 ## Links
 
-- **Orignal Repo**: [ksasao.github.io/anime-character-detector](https://ksasao.github.io/anime-character-detector/)
+- **Orignal Repo**: [ksasao.github/anime-character-detector](https://github.com/ksasao/anime-character-detector)
+- **Live Link**: [ksasao.github.io/anime-character-detector](https://ksasao.github.io/anime-character-detector/)
 - **Result Dataset**:[muneeburrehman98/danbooru-annotated-images](https://www.kaggle.com/datasets/muneeburrehman98/danbooru-annotated-images)
 
 ## Model Information
